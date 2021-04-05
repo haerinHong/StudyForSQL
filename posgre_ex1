@@ -1,0 +1,190 @@
+# Spring MyBatis Query Used in HDM
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hdm">
+
+    <sql id="pagingHeader">
+        SELECT *
+          FROM (SELECT ROWNUM rnum
+                      ,z.*
+                  FROM (
+    </sql>
+
+    <sql id="pagingFooter">
+                      ) z
+                 WHERE ROWNUM &lt;= (${limit} * ${page})
+              )
+         WHERE rnum &gt;= ${limit} * (${page} - 1) + 1
+    </sql>
+    
+    
+----------------------------------------------------------------------
+    -- HEADER
+SELECT *
+          FROM (SELECT ROWNUM rnum
+                      ,z.*
+                  FROM (
+-- HEADER END
+                  WITH container AS ( 
+					SELECT level lvl, dm.*, TO_CHAR(SYSDATE, 'yyyymmddhh24miss') AS registerdate
+                    FROM dam_mdl_container dm
+                    WHERE 1 = 1
+                    START WITH dm.upr_stru_id = 'd3acbcaf-1e72-483a-b2e8-bc3543e3dc02'
+                          AND dm.aval_end_dt = '99991231235959'
+                          CONNECT BY dm.upr_stru_id = PRIOR dm.stru_id
+                          AND dm.aval_end_dt  = '99991231235959')
+          		, tab AS ( SELECT /*+ no_merge */ tab.mdl_id
+                           , tab.ent_id tab_id
+                           , tab.ent_nm tab_nm
+                           , ent.ent_id
+                           , ent.ent_nm
+                           , tab.ownr_sbj_id
+                           , tab.ent_step
+                           , tab.share_type
+                           , tab.ent_vrtl_type
+                           , (select aval_st_dt from dam_man_ver where mdl_id = tab.mdl_id and aval_end_dt = '99991231235959') AS aval_st_dt  
+                           , tab.creat_dt
+                           , tab.mod_dt
+                           , tab.stnd_type
+                           , tab.tgt_db_id
+                           , p.sbj_fld_id
+                           , p.pane_type
+                           , p.canvas_id
+                           , db.tgt_nm
+                           , db.db_type
+                           , c.registerdate
+                           , c.stru_id
+                           , c.stru_type
+                           , d.val AS LEDGER_GBN
+                           , d2.val AS NO_LEDGER_REASON
+                           , d3.val AS NO_LEDGER_ETC_REASON
+                        FROM dam_pane p
+                       INNER JOIN container c
+                          ON c.mdl_id = p.mdl_id
+                         AND c.stru_id = p.sbj_fld_id
+                       INNER JOIN dam_pane_sub_obj ps
+                          ON ps.mdl_id = p.mdl_id
+                         AND ps.pane_id = p.pane_id
+                         AND ps.type = '200'
+                         AND ps.aval_st_dt  <=  c.registerdate
+                         AND ps.aval_end_dt  >  c.registerdate
+                       INNER JOIN DAM_ENT_OBJ tab
+                          ON tab.mdl_id = c.mdl_id
+                         AND tab.ent_id = ps.obj_id
+                         AND tab.type = '200'
+                         AND tab.aval_st_dt  <=  c.registerdate
+                         AND tab.aval_end_dt  >  c.registerdate
+                        LEFT OUTER JOIN dam_mapper map
+                          ON map.mdl_id = tab.mdl_id
+                         AND map.mapper_type = 0
+                         AND map.sub_id = tab.ent_id
+                         AND map.aval_st_dt  <=  c.registerdate
+                         AND map.aval_end_dt  >  c.registerdate
+				         INNER JOIN DAM_ENT_OBJ ent
+				         ON ent.mdl_id = map.mdl_id
+				         AND ent.ent_id = map.key_id
+				         AND ent.type = '100'
+				         AND ent.aval_st_dt  <=  c.registerdate
+				         AND ent.aval_end_dt  >  c.registerdate
+				                        LEFT OUTER JOIN dam_user_defi m
+				                          on m.mdl_id = ent.mdl_id
+				                         AND m.obj_type = '100'
+				                         AND m.USER_DEFI_NM = get_term('ko', 'label.ledger_gbn'/* XXXXXXX */)
+				                         AND m.aval_st_dt <=  c.registerdate
+				                         AND m.aval_end_dt  >  c.registerdate
+                                           LEFT OUTER JOIN dam_udp d
+                                             ON d.mdl_id = m.mdl_id
+                                            AND d.obj_id = ent.ent_id
+                                            AND m.user_defi_id = d.user_defi_id
+                                            AND d.aval_st_dt <=  c.registerdate
+                                            AND d.aval_end_dt  >  c.registerdate
+                                           LEFT OUTER JOIN dam_user_defi m2
+                                             ON m.mdl_id = m2.mdl_id
+                                            AND m2.obj_type = '100'
+                                            AND m2.user_defi_nm = get_term('ko', 'label.no_ledger_reason'/* 'XXX XXXX' */)
+                                            AND m2.aval_st_dt <=  c.registerdate
+                                            AND m2.aval_end_dt  >  c.registerdate
+                                           LEFT OUTER JOIN dam_udp d2
+                                             ON d2.mdl_id = m2.mdl_id
+                                            AND d2.user_defi_id = m2.user_defi_id
+                                            AND d2.obj_id = ent.ent_id
+                                            AND d2.aval_st_dt <=  c.registerdate
+                                            AND d2.aval_end_dt  >  c.registerdate
+                                           LEFT OUTER JOIN dam_user_defi m3
+                                             ON m.mdl_id = m3.mdl_id
+                                            AND m3.obj_type = '100'
+                                            AND m3.user_defi_nm = get_term('ko', 'label.no_ledger_etc_reason'/* 'XXX XXXXXX' */)
+                                            AND m3.aval_st_dt <=  c.registerdate
+                                            AND m3.aval_end_dt  >  c.registerdate
+                                           LEFT OUTER JOIN dam_udp d3
+                                             ON d3.mdl_id = m.mdl_id
+                                            AND m3.user_defi_id = d3.user_defi_id
+                                            AND d3.obj_id = ent.ent_id
+                                            AND d3.aval_st_dt <=  c.registerdate
+                                            AND d3.aval_end_dt  >  c.registerdate
+                       INNER JOIN dam_tgt_db_mdl db
+                          ON db.mdl_id = tab.mdl_id
+                         AND db.tgt_db_id = tab.tgt_db_id
+                         AND db.aval_st_dt  <=  c.registerdate
+                         AND db.aval_end_dt  >  c.registerdate
+                       WHERE 1 = 1
+                         AND p.pane_type = '8'
+                         AND p.aval_st_dt  <=  c.registerdate
+                         AND p.aval_end_dt  >  c.registerdate )
+        SELECT t.mdl_id a_uid
+             , t.tab_id tabid
+             , t.tab_nm tabidname
+             , t.ent_nm tabname
+             , LPAD(t.ent_vrtl_type, 4, '0') AS tabtype
+             , '' asistabname
+             , t.ent_id entid
+             , t.ownr_sbj_id
+             , md_etc_v5.get_area_path_nm(t.stru_id) as area_nm
+             , LPAD(t.ent_step, 4, '0') core
+             , DECODE(t.share_type, 1, 'Export',  2, 'Import', '' ) AS sharing
+             , t.aval_st_dt
+             , t.registerdate
+             , t.creat_dt createdate
+             , t.mod_dt updatedate
+             , (CASE WHEN t.stnd_type = 1 THEN GET_TERM('ko', 'label.target_1')
+                     WHEN t.stnd_type = 2 THEN GET_TERM('ko', 'label.non_target_1')
+                     WHEN t.stnd_type = 0 AND m.stnd_type = 1 THEN GET_TERM('ko', 'label.target_1')
+                     WHEN t.stnd_type = 0 AND m.stnd_type= 2 THEN GET_TERM('ko', 'label.non_target_1')
+                END) stdopt
+             , CASE WHEN t.ownr_sbj_id = t.sbj_fld_id THEN 'Y' ELSE 'N' END owner_sub_yn
+             , t.sbj_fld_id refareaid
+             , t.pane_type
+             , t.canvas_id
+             , PKG_GLOB.DBTYPE_TO_METADBTYPE(t.db_type) as metadbtype
+             , t.tgt_db_id
+             , t.tgt_nm
+             , t.db_type
+             , t.stru_type
+             , t.LEDGER_GBN
+             , t.NO_LEDGER_REASON
+             , t.NO_LEDGER_ETC_REASON
+             , COUNT(1) OVER() total_row_count
+          FROM tab t
+         INNER JOIN dam_mdl_info m
+            ON m.mdl_id = t.mdl_id
+           AND m.aval_st_dt  <=  t.registerdate
+           AND m.aval_end_dt  >  t.registerdate
+        WHERE 1=1
+-- Dynamic Mybatis 
+        --AND (t.stnd_type = 1 OR (t.stnd_type = 0 AND m.stnd_type = 1))
+        AND (t.stnd_type = 2 OR (t.stnd_type = 0 AND m.stnd_type = 2)) /*비대상 */
+          --AND t.NO_LEDGER_REASON LIKE '업무와%'
+          --AND t.NO_LEDGER_REASON LIKE '기타기타' || '%'
+          AND  ( UPPER(t.tab_nm) LIKE UPPER('en') || '%' OR UPPER(t.ent_nm) LIKE UPPER('en') || '%'  )
+          AND LPAD(t.ent_vrtl_type, 4, '0') = '0000'
+          --AND t.LEDGER_GBN = 'N'
+         -- AND t.NO_LEDGER_ETC_REASON LIKE '기타기타222' || '%'
+          
+--   FOOTER
+   ) z
+                 WHERE ROWNUM <= (50 * 1)
+              )
+         WHERE rnum >= 50 * (1 - 1) + 1
+-- FOOTER END      
+    
