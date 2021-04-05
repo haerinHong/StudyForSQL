@@ -1,8 +1,9 @@
 ![image](https://user-images.githubusercontent.com/68880203/113540798-dc587480-961b-11eb-9446-336ce582be90.png)
 # CUBRID
     네이버의 DBMS
-	CUBRID는 객체 관계형 데이터베이스 관리 시스템으로서, 데이터베이스 서버, 브로커, CUBRID 매니저로 구성된다. CUBRID는 인터넷 데이터 서비스에 최적화된 데이터베이스 시스템이며, 사용자가 편리하게 사용할 수 있는 다양한 기능을 제공한다. 
-### 테이블
+	CUBRID는 객체 관계형 데이터베이스 관리 시스템으로서, 데이터베이스 서버, 브로커, CUBRID 매니저로 구성된다. 
+	CUBRID는 인터넷 데이터 서비스에 최적화된 데이터베이스 시스템이며, 사용자가 편리하게 사용할 수 있는 다양한 기능을 제공한다. 
+## 테이블
 	CREATE TABLE olympic2 (
     host_year        INT    NOT NULL PRIMARY KEY,
     host_nation      VARCHAR(40) NOT NULL,
@@ -19,29 +20,29 @@
 	CREATE TABLE const_tbl2(id INT NOT NULL PRIMARY KEY, phone VARCHAR);
 	-- Unique 
 
-# 테이블 INSERT
+## 테이블 INSERT
 	CREATE TABLE const_tbl6(id INT, phone VARCHAR, CONSTRAINT UNIQUE (id, phone));
 	INSERT INTO const_tbl6 VALUES (1, NULL), (2, NULL), (1, '000-0000'), (1, '111-1111');
 	SELECT * FROM const_tbl6;
 	
 		
-# 테이블 ALTER
+## 테이블 ALTER
 동의어 (TABLE = CLASS)
 동의어 (VIEW = VCLASS)
 동의어(COLUMN = ATTRIBUTE)
 
-### 컬럼 ALTER
+## 컬럼 ALTER
 	CREATE TABLE a_tbl;
 	ALTER TABLE a_tbl ADD COLUMN age INT DEFAULT 0 NOT NULL;
 	ALTER TABLE a_tbl ADD COLUMN name VARCHAR FIRST;
 
-### 테이블 INSERT
+## 테이블 INSERT
 	CREATE TABLE const_tbl6(id INT, phone VARCHAR, CONSTRAINT UNIQUE (id, phone));
 	INSERT INTO const_tbl6 VALUES (1, NULL), (2, NULL), (1, '000-0000'), (1, '111-1111');
 	SELECT * FROM const_tbl6;
 	
 		
-### 테이블 ALTER
+## 테이블 ALTER
 동의어 (TABLE = CLASS)
 동의어 (VIEW = VCLASS)
 동의어(COLUMN = ATTRIBUTE)
@@ -49,12 +50,12 @@
 
 
 
-### 컬럼
+## 컬럼
 	- 초기값 설정
 		- SHARED : 모든 행 동일, 다른 새로운 값을 INSERT 하면 모든 행에서 새로운 값으로 갱신된다. (전채 다 변경)
 		- DEFAULT : 새로운 행 사입시 컬럼 지정하지 않으면 DEFAULT로 설정된 값 저장. -> MODIFY 로 설정을 변경할 수 있다. (전체 다 변경은 아님) 
 		 SHARED 또는 DEFAULT 속성을 동시에 정의 불가 X
-### 컬럼 ALTER
+## 컬럼 ALTER
 	CREATE TABLE a_tbl;
 	ALTER TABLE a_tbl ADD COLUMN age INT DEFAULT 0 NOT NULL;
 	ALTER TABLE a_tbl ADD COLUMN name VARCHAR FIRST;
@@ -65,12 +66,12 @@
 	SELECT * FROM a_tbl;
 
 
-### AUTO_INCREMENT 사용
+## AUTO_INCREMENT 사용
 	: 테이블 내 한개만 존재
 	CREATE TABLE table_name (id INT AUTO_INCREMENT[(seed, increment)]);
 	CREATE TABLE table_name (id INT AUTO_INCREMENT) AUTO_INCREMENT = seed ;
 
-### 인덱스
+## 인덱스
 	- CREATE INDEX
 		내림차순으로 정렬된 인덱스 생성
 		CREATE INDEX gold_index ON participant(gold DESC);
@@ -90,7 +91,7 @@
 		DROP INDEX i_game_medal ON game;
 		UNIQUE인 경우) DROP UNIQUE INDEX i_game_medal ON game;
 
-### PK
+## PK
 	CREATE TABLE pk_tbl (a INT, b INT, PRIMARY KEY (a, b DESC));
 
 	CREATE TABLE const_tbl7 (
@@ -116,7 +117,7 @@
 		PRIMARY KEY (host_year, event_code, athlete_code, medal)
 	);
 	
-### 제약키
+## 제약키
 	- UNIQUE 제약 : 고유한 값, 동일한 컬럼값 추가시 에러
 		CREATE TABLE const_tbl5(id INT UNIQUE, phone VARCHAR);
 		
@@ -125,7 +126,7 @@
 		
 	
 	
-# Change / MODIFY
+## Change / MODIFY
 	change : 컬럼의 이름, 타입, 크기 및 속성을 변경, 기존 칼럼의 이름과 새 칼럼의 이름이 같으면 타입, 크기 및 속성만 변경
 	MODIFY : 칼럼의 타입, 크기 및 속성을 변경, 칼럼의 이름은 변경X
 	
@@ -159,7 +160,7 @@
 	SELECT * FROM new_tbl1;
 	
 	
-### 뷰 (VIEW 와 VCLASS 는 동의어)
+## 뷰 (VIEW 와 VCLASS 는 동의어)
 	a_tbl 
 	  (1,'111-1111')
 	  (2,'222-2222')
@@ -175,7 +176,7 @@
 	- DROP VIEW
 		DROP VIEW b_view;
 	 
-## 시퀀스 SEQUENCE
+## ORACLE의 시퀀스 SEQUENCE
 기존 Oracle의 Sequence 차이
 시퀀스란 자동으로 순차적으로 증가하는 순번을 반환하는 데이터베이스 객체.
  기존 문법
@@ -206,6 +207,35 @@
     (Delete)
     DROP SEQUENCE [시퀀스명]
     
+   ## CUBRID의 시퀀스 SEQUENCE 
+    - CREATE SEQUENCE
+		CREATE SERIAL serial_name
+		[ START WITH initial ]
+		[ INCREMENT BY interval ]
+		[ MINVALUE min | NOMINVALUE ]
+		[ MAXVALUE max | NOMAXVALUE ]
+		[ CACHE cached_num | NOCACHE ]
+	
+		
+		CREATE SERIAL order_no START WITH 10000 INCREMENT BY 2 MAXVALUE 20000;
+				code  name
+		===================================
+				10000  'Park'
+				10002  'Kim'
+				10004  'Choo'
+				10004  'Lee'
+				
+	- ALTER SEQUENCE
+		ALTER SERIAL order_no START WITH 100 MINVALUE 100 INCREMENT BY 2;
+		ALTER SERIAL order_no CACHE 5;
+		--altering serial to operate in common mode
+		ALTER SERIAL order_no NOCACHE;
+	
+	- DROP SEQUENCE
+		: IF EXISTS 절을 함께 지정하는 경우, 대상 시리얼이 없어도 에러가 발생 X
+		
+		DROP SERIAL order_no;
+		DROP SERIAL IF EXISTS order_no;
 
     
     
