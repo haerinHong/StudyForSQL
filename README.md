@@ -1,5 +1,6 @@
 ![image](https://user-images.githubusercontent.com/68880203/113540798-dc587480-961b-11eb-9446-336ce582be90.png)
 # CUBRID
+    네이버의 DBMS
 	CUBRID는 객체 관계형 데이터베이스 관리 시스템으로서, 데이터베이스 서버, 브로커, CUBRID 매니저로 구성된다. CUBRID는 인터넷 데이터 서비스에 최적화된 데이터베이스 시스템이며, 사용자가 편리하게 사용할 수 있는 다양한 기능을 제공한다. 
 ### 테이블
 	CREATE TABLE olympic2 (
@@ -174,12 +175,43 @@
 	- DROP VIEW
 		DROP VIEW b_view;
 	 
+## 시퀀스 SEQUENCE
+기존 Oracle의 Sequence 차이
+시퀀스란 자동으로 순차적으로 증가하는 순번을 반환하는 데이터베이스 객체.
+ 기존 문법
+    - CREATE SEQUENCE [시퀀스명]
+    - INCREMENT BY [증감숫자]
+    - START WITH [시작숫자] 
+    - NOMINVALUE OR MINVALUE [최솟값]
+    - NOMAXVALUE OR MAXVALUE [최대값] 
+    - CYCLE OR NOCYCLE 
+    - CACHE OR NOCACHE 
+       : CACHE 설정시 메모리에 시퀀스 값을 미리 할당하고 NOCACHE 설정시 시퀀스값을 메로리에 할당하지 않음
 
+    (예시)
+    --(CREATE)
+    CREATE SEQUENCE EX_SEQ --시퀀스이름 EX_SEQ
+    INCREMENT BY 1 --증감숫자 1
+    START WITH 1 --시작숫자 1
+    MINVALUE 1 --최소값 1
+    MAXVALUE 1000 --최대값 1000
+    NOCYCLE --순한하지않음
+    CACHE; --메모리에 시퀀스값 미리할당
+    (Read)
+    SELECT EX_SEQ.CURRVAL FROM DUAL --해당 시퀀스 값 
+    SELECT * FROM USER_SEQUENCES  --전체 시퀀스 조회
+    (Update)
+    ALTER SEQUENCE [시퀀스명]
+    INCREMENT BY [증가값]
+    (Delete)
+    DROP SEQUENCE [시퀀스명]
+    
 
+    
+    
 
 
 
 	
 	
-
 
