@@ -5,7 +5,29 @@
 	Oracle
 	대규모 데이터베이스 지원, 성능이 좋고 기능이 많은데 비싸다.
 	
+## 1. TEXT ↔  CLOB (VARCHAR2) 
+    (PostgreSQL) TEXT ↔  (Oralcle) CLOB
+    LOB은 TEXT, 그래픽, 이미지, 비디오, 사운드 등 구조화되지 않은 대형 데이터를 저장하는데 사용한다. CLOB - Text, BLOB - 파일
+    VARCHAR2 를 CLOB으로 삽입시 TO_CLOB(text), 혹은 CLOB을 TO_CHAR(clob) 으로 사용
+                                                    참고: https://stepping.tistory.com/30 [디딤돌]
 
+## 2. PIVOT :   STRING_AGG() ↔  LISTAGG()
+    행으로 여러개 되어 있는 데이터를 한 줄로 가져오는 것
+![image](https://user-images.githubusercontent.com/68880203/113993506-7f64f480-988f-11eb-8020-7a461bebd7d6.png)
+
+    (PostgreSQL) STRING_AGG ↔  (Oralcle) LISTAGG
+    
+    
+    STRING_AGG 함수는 GROUP BY 절과 함께 사용해야 한다. ORDER BY 절을 사용하여 정렬이 가능하며 ORDER BY 절은 생략할 수 있다.
+    
+    (POSTGRESQL)
+    STRING_AGG("합칠컬럼명", "구분자") WITHIN GROUP(ORDER BY "컬럼명")
+    (ORACLE)
+    listagg (컬럼명, '구분기호') within group (order by 정렬기준컬럼)
+
+                                    출처: https://goddaehee.tistory.com/57 [갓대희의 작은공간]
+    예시)
+![image](https://user-images.githubusercontent.com/68880203/113992371-5a23b680-988e-11eb-83fd-0a58a1023a28.png)
 	
 	
 
