@@ -1,3 +1,5 @@
+2021-04-08 오라클 PostgreSQL - Oracle 차이  https://github.com/haerinHong/StudyForSQL/blob/main/Postgresql-Oracle_Diff.md
+
 2021-04-06) postgre -> Oracle로 DDL 변환, 패키지 쿼리 오류 수정
 
 2021-04-05) 큐브리드 정리 
