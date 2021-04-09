@@ -31,3 +31,33 @@
 	
 	
 
+## 3. (SELECT RAWTOHEX(SYS_GUID()) FROM dual) ↔ uuid_generate_v4()::text
+    고유한 값을 생성 함
+    SYS_GUID() : 난수를 발생시켜 고유한 RAW DATA를 생성해내는 Oracle의 함수
+    RAWTOHEX() : RAW DATA를 16진수의 문자열로 변경시키는 Oracle의 함수
+    uid_generate_v4()::text : 위의 기능을 PostgreSQL에서 사용할 수 있도록 만든 
+
+## 4. DELETE
+    (Oracle)
+    DELETE [TABLE_NAME] or DELETE FROM [TABLE_NAME]
+    (PostgreSQL)
+    DELETE FROM [TABLE_NAME]
+
+## 5. MERGE
+
+    (Oracle)
+    MERGE INTO [TABLE_NAME]
+    USING (
+            [SELECT 절]
+          ) v
+       ON ([조건 절])
+     WHEN MATCHED THEN
+            UPDATE SET [UPDATE 절]
+
+    (PostgreSQL)
+    with v as (
+        [SELECT 절]
+    ) update [TABLE_NAME]
+         set [UPDATE 절]
+        from v
+       where [조건 절]
