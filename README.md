@@ -76,6 +76,10 @@
 	: 테이블 내 한개만 존재
 	CREATE TABLE table_name (id INT AUTO_INCREMENT[(seed, increment)]);
 	CREATE TABLE table_name (id INT AUTO_INCREMENT) AUTO_INCREMENT = seed ;
+	
+	큐브리드의 AUTO_INCREMENT 속성
+	SEED = + / 0 / - 모두 가능하지만
+	STEP = 무조건 + 만 가능하다. 
 
 ## 인덱스
 	- CREATE INDEX
