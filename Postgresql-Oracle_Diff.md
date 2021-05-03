@@ -61,3 +61,14 @@
          set [UPDATE 절]
         from v
        where [조건 절]
+       
+  ## 6. 기타
+  문자열 비교시(Tibero ; 거의 mysql, Oracle 과 유사) Tibero는 a ||'^'||b 로 문자열을 이어 붙이지만,
+  Postgresql은 CONCAT으로 이어 붙인다. 
+  
+  <Tibero>
+  AND g.scprop4||'^'||g.scprop7||'^'||g.scprop9||'^'||g.scprop21||'^'||g.scprop31||'^'||g.scprop32 != 	   		  g.tcprop4||'^'||g.tcprop7||'^'||g.tcprop9||'^'||g.tcprop21||'^'||g.tcprop31||'^'||g.tcprop32
+	
+<Postgresql>
+AND CONCAT(g.scprop4, '^', g.scprop7, '^', g.scprop8, '^', g.scprop9, '^', g.scprop23, '^', g.scprop24 ) != 
+	CONCAT(g.tcprop4, '^', g.tcprop7, '^', g.tcprop8, '^', g.tcprop9, '^', g.tcprop23, '^', g.tcprop24)
