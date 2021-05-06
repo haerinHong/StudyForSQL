@@ -73,3 +73,56 @@
     <Postgresql>
     AND CONCAT(g.scprop4, '^', g.scprop7, '^', g.scprop8, '^', g.scprop9, '^', g.scprop23, '^', g.scprop24 ) !=
 	CONCAT(g.tcprop4, '^', g.tcprop7, '^', g.tcprop8, '^', g.tcprop9, '^', g.tcprop23, '^', g.tcprop24)
+
+   ## 7. Function
+   : Oracle은 계층형 쿼리를 제공해주지만 Postgresql은 따로 제공해주는 것이 없음
+   ### Oracle 예시
+```
+CREATE OR REPLACE FUNCTION MDQ_GET_BIZAREA_PATH (V_BIZ_ID VARCHAR2)
+        RETURN VARCHAR2 IS
+        RET   VARCHAR2(500) := '';
+        BEGIN
+            SELECT LISTAGG(x.biz_name, ' > ') WITHIN GROUP(ORDER BY LEVEL DESC)
+              INTO RET
+              FROM mdq_bizarea x
+             START WITH x.biz_id = V_BIZ_ID
+               AND x.expireddate = '99991231235959'
+           CONNECT BY PRIOR x.biz_pid = x.biz_id
+               AND x.expireddate = '99991231235959';
+        RETURN RET;
+        END MDQ_GET_BIZAREA_PATH;
+ ```
+     ### Postgresql 예시
+```
+    CREATE OR REPLACE FUNCTION MDQ_GET_BIZAREA_PATH(v_biz_id character varying)
+    RETURNS character varying
+    LANGUAGE plpgsql
+    STABLE security definer
+    AS $function$
+    DECLARE
+        ret varchar(500) := '';
+    BEGIN
+        WITH RECURSIVE cte AS (
+            SELECT 1 as lvl
+                    , biz_name
+                    , biz_pid
+                    , biz_id
+              FROM mdq_bizarea x
+             WHERE 1=1
+               AND x.biz_id = v_biz_id
+               AND x.expireddate = '99991231235959'
+             UNION ALL
+            SELECT cte.lvl + 1 as lvl
+                  , x.biz_name
+                  , x.biz_pid
+                  , x.biz_id
+              FROM mdq_bizarea x
+                  JOIN cte cte
+                ON cte.biz_pid = x.biz_id
+             WHERE x.expireddate = '99991231235959'
+        ) SELECT STRING_AGG(biz_name, ' > ' ORDER BY lvl DESC) INTO ret FROM cte;
+        RETURN ret;
+    END;
+    $function$;
+```
+ 
